@@ -1,4 +1,4 @@
-name: Run Vitest
+name: Build Test and lint
 on: [push, pull_request]
 
 jobs:
@@ -9,6 +9,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
+      - run: npm ci # Hay que corrar esto para los siguientes pasos
       - run: npm run test:coverage
-      - run: npm run eslint
+      - run: npm run lint
