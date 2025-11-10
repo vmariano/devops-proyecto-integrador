@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { ProductCard } from '@/components/product-card'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 const product = {
   id: 1,
