@@ -3,8 +3,10 @@ output "ecs_cluster_name" {
 }
 
 output "ecs_service_name" {
-  value = aws_ecs_service.app_service.name
+  description = "Nombre del servicio ECS"
+  value       = aws_ecs_service.monitoring_service.name
 }
+
 
 output "security_group" {
   value = aws_security_group.ecs_sg.id

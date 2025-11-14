@@ -20,19 +20,19 @@ resource "aws_ecs_task_definition" "monitoring" {
   container_definitions = jsonencode([
     {
       name      = "ecommerce-app"
-      image     = var.container_image
+      image     = var.frontend_image
       essential = true
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 3000
+          hostPort      = 3000
           protocol      = "tcp"
         }
       ]
     },
     {
       name  = "prometheus"
-      image = "prom/prometheus:latest"
+      image = var.prometheus_image
       essential = false
       portMappings = [
         {
@@ -54,21 +54,29 @@ resource "aws_ecs_task_definition" "monitoring" {
     },
     {
       name  = "grafana"
-      image = "grafana/grafana:latest"
+      image = var.grafana_image
       essential = false
       portMappings = [
         {
-          containerPort = 3000
-          hostPort      = 3000
+          containerPort = 9500
+          hostPort      = 9500
           protocol      = "tcp"
         }
       ]
       environment = [
         { name = "GF_SECURITY_ADMIN_USER", value = "admin" },
         { name = "GF_SECURITY_ADMIN_PASSWORD", value = "admin123" },
-        { name = "GF_SERVER_ROOT_URL", value = "http://localhost:3000" },
+        { name = "GF_SERVER_HTTP_PORT", value = "9500" },
         { name = "GF_INSTALL_PLUGINS", value = "grafana-clock-panel,grafana-piechart-panel" }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/${var.project_name}"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "grafana"
+        }
+      }
     }
   ])
 
@@ -77,6 +85,11 @@ resource "aws_ecs_task_definition" "monitoring" {
   }
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+}
+
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 7
 }
 
 ##############################################

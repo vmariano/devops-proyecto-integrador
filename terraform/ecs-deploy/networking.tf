@@ -34,24 +34,31 @@ resource "aws_security_group" "ecs_sg" {
   vpc_id = aws_vpc.main.id
   name   = "ecs-sg"
 
+  # ingress {
+  #   description = "HTTP access"
+  #   from_port   = 80
+  #   to_port     = 80
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+  # ingress {
+  #   description = "HTTPS"
+  #   from_port   = 443
+  #   to_port     = 443
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  #}
   ingress {
-    description = "HTTP access"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "HTTPS"
-    from_port   = 443
-    to_port     = 443
+    description = "ecommerce-app Frontend"
+    from_port   = 3000
+    to_port     = 3000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     description = "Grafana"
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 9500
+    to_port     = 9500
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
