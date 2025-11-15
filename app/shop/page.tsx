@@ -19,7 +19,7 @@ export default function ShopPage() {
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn")
     if (loggedIn !== "true") {
-      router.push("/login")
+      router.push("/")
     } else {
       setIsLoggedIn(true)
     }
@@ -43,7 +43,8 @@ export default function ShopPage() {
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn")
-    router.push("/login")
+    router.push("/")
+    console.log('Se deslogueo')
   }
 
   if (!isLoggedIn) {
