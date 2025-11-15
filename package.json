@@ -8,7 +8,6 @@
     "lint": "next lint",
     "start": "next start",
     "test": "vitest",
-    "test:unit": "vitest",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed --debug"
