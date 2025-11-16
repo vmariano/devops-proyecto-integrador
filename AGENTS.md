@@ -20,7 +20,6 @@ Fecha de referencia: 2025-11-09 14:18 (local)
 ## 3) Estructura de carpetas relevante
 - `app/`
   - `page.tsx`: pantalla de Login (ruta `/`).
-  - `login/page.tsx`: pantalla de Login alternativa (ruta `/login`).
   - `shop/page.tsx`: tienda protegida (ruta `/shop`).
 - `components/`
   - `product-card.tsx`: tarjeta de producto.
@@ -43,13 +42,13 @@ Fecha de referencia: 2025-11-09 14:18 (local)
 - `npm run test:e2e:headed`: E2E en modo interactivo.
 
 ## 5) Navegación y flujo de autenticación (simulado)
-- Login (en `app/page.tsx` y `app/login/page.tsx`):
+- Login (en `app/page.tsx`):
   - Credenciales válidas: `admin` / `admin`.
   - Al loguear: `localStorage.setItem('isLoggedIn', 'true')` y `router.push('/shop')` tras 500ms de delay.
   - Credenciales inválidas: muestra error y mantiene la pantalla.
 - Protección de `/shop` (`app/shop/page.tsx`):
-  - En `useEffect`, si `localStorage.isLoggedIn !== 'true'` → `router.push('/login')`.
-  - Botón “Cerrar sesión” borra `localStorage.isLoggedIn` y navega a `/login`.
+  - En `useEffect`, si `localStorage.isLoggedIn !== 'true'` → `router.push('/')`.
+  - Botón “Cerrar sesión” borra `localStorage.isLoggedIn` y navega a `/`. 
 
 ## 6) Tienda, filtros y datos
 - Fuente de datos: `lib/products.ts` con un array `products: Product[]` y `categories`.
@@ -97,14 +96,14 @@ Fecha de referencia: 2025-11-09 14:18 (local)
 
 ## 11) Rutas relevantes
 - Web:
-  - `/` y `/login`: pantallas de login.
+  - `/`: pantalla de login.
   - `/shop`: tienda (protegida por verificación de `localStorage`).
 - API:
   - `/api/metrics`: métricas Prometheus.
 
 ## 12) Tareas típicas para un LLM (cómo proceder con seguridad)
 - Agregar campo/validación al login:
-  1. Editar `app/page.tsx` (y/o `app/login/page.tsx`).
+  1. Editar `app/page.tsx`.
   2. Sincronizar tests en `__tests__/integration/app.page.login.test.tsx`.
 - Cambiar lógica de filtrado:
   1. Modificar `app/shop/page.tsx` y, si aplica, `components/shop-sidebar.tsx`.
