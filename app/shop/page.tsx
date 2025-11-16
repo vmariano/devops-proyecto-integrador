@@ -44,7 +44,8 @@ export default function ShopPage() {
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn")
     router.push("/")
-    console.log('Se deslogueo')
+    console.log(router);
+    console.log('Se deslogueo');
   }
 
   if (!isLoggedIn) {

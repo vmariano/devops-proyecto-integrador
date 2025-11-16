@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import React from 'react'
-import { vi, beforeEach } from 'vitest'
+import { vi } from 'vitest'
 
 
 // Mock next/image to a plain img to avoid Next.js internals in tests

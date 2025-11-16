@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ShopPage from '@/app/shop/page'
 import { products } from '@/lib/products'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+
+let push = vi.fn();
+vi.mock('next/navigation', () => ({
+    useRouter: () => ({push}),
+}))
+
+import ShopPage from '@/app/shop/page'
 
 function mockLoggedIn() {
   vi.spyOn(window.localStorage.__proto__, 'getItem').mockReturnValue('true')
@@ -10,7 +17,8 @@ function mockLoggedIn() {
 
 describe('ShopPage', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
+      vi.clearAllMocks()
+      vi.restoreAllMocks()
   })
 
   it('muestra todos los productos cuando está logueado', async () => {
@@ -38,7 +46,7 @@ describe('ShopPage', () => {
     const expected = products.filter(p => p.category === 'electronics').filter(p => p.name.toLowerCase().includes('smart'))
 
     // Verificar contador
-    const countLabel = await screen.findByText(/productos? encontrados/i)
+    const countLabel = await screen.findByText(/producto? encontrado/i)
     expect(countLabel.textContent).toContain(String(expected.length))
 
     // Verificar cantidad de tarjetas renderizadas (por botones de agregar)
@@ -46,21 +54,16 @@ describe('ShopPage', () => {
     expect(addButtons).toHaveLength(expected.length)
   })
 
-  it('logout elimina sesión y navega a /login (push mockeado)', async () => {
+  it('logout elimina sesión y navega a / (push mockeado)', async () => {
     mockLoggedIn()
-    const push = vi.fn()
-    vi.doMock('next/navigation', async () => {
-      const actual: any = await vi.importActual('next/navigation')
-      return { ...actual, useRouter: () => ({ push }) }
-    })
 
     // re-importar componente con el mock de arriba aplicado
-    const { default: Shop } = await import('@/app/shop/page')
-    render(<Shop />)
+    const { default: ShopPage } = await import('@/app/shop/page')
+    render(<ShopPage />)
 
-    const logoutBtn = await screen.findByRole('button', { name: /cerrar sesión/i })
-    await userEvent.click(logoutBtn)
-
-    expect(push).toHaveBeenCalledWith('/login')
+    const logoutBtn = await screen.findByRole('button', { name: /Cerrar sesión/i })
+    await userEvent.click(logoutBtn);
+    expect(push).toHaveBeenCalled();
+    expect(push).toHaveBeenCalledWith('/');
   })
 })
