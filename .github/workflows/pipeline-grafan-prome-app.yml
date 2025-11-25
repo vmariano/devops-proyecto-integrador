@@ -1,0 +1,57 @@
+name: Build and Push Docker Images
+
+# Se ejecuta automáticamente cuando se hace push al branch main
+# y también se puede ejecutar manualmente desde la pestaña "Actions"
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Inicia sesión en Docker Hub con los secretos configurados
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. Construye y publica la imagen del Frontend (Next.js)
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-frontend:${{ github.run_number }}
+
+      # 4. Construye y publica la imagen de Grafana (personalizada)
+      - name: Build and push Grafana image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./monitoring/grafana
+          file: ./monitoring/grafana/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/grafana-custom:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/grafana-custom:${{ github.run_number }}
+
+      # 5. Construye y publica la imagen de Prometheus (personalizada)
+      - name: Build and push Prometheus image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./monitoring/prometheus
+          file: ./monitoring/prometheus/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/prometheus-custom:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/prometheus-custom:${{ github.run_number }}

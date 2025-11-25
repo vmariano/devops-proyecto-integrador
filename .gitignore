@@ -30,3 +30,22 @@ next-env.d.ts
 .DS_Store
 /.idea/*
 test-results/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+crash.log
+
+# Node / npm
+node_modules/
+npm-debug.log
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
