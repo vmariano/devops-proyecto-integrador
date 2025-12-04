@@ -3,12 +3,16 @@ name: Build and Push Docker Images
 # Se ejecuta automáticamente cuando se hace push al branch main
 # y también se puede ejecutar manualmente desde la pestaña "Actions"
 on:
-  push:
-    branches: ["main"]
+  workflow_run:
+    workflows: ["pipeline"]
+    types:
+      - completed
+    
   workflow_dispatch:
 
 jobs:
-  build-and-push:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
