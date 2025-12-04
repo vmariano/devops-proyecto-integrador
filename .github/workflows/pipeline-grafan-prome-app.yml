@@ -4,7 +4,7 @@ name: Build and Push Docker Images
 # y también se puede ejecutar manualmente desde la pestaña "Actions"
 on:
   workflow_run:
-    workflows: ["pipeline"]
+    workflows: ["Build Test and lint"]
     types:
       - completed
     
