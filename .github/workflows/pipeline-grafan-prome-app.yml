@@ -4,7 +4,7 @@ name: Build and Push Docker Images
 # y también se puede ejecutar manualmente desde la pestaña "Actions"
 on:
   workflow_run:
-    workflows: ["pipeline"]
+    workflows: ["Build Test and lint"]
     types:
       - completed
     
@@ -12,8 +12,14 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
+    # Solo correr si:
+    # - El workflow de CI terminó OK
+    # - El CI corrió sobre la rama master
+    if: >
+      ${{ 
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'master'
+      }}    runs-on: ubuntu-latest
 
     steps:
       # 1. Clona el repositorio
