@@ -1,0 +1,289 @@
+{
+  "id": null,
+  "uid": "techstore-full",
+  "title": "TechStore - App Monitoring",
+  "tags": ["techstore", "nodejs", "app"],
+  "timezone": "",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+
+    {
+      "type": "stat",
+      "title": "CPU Uso aprox (%)",
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(TechStore_process_cpu_seconds_total{instance=\"127.0.0.1:3000\",job=\"app\"}[1m]) * 100",
+          "refId": "A",
+          "legendFormat": "CPU %"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 400,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 200 },
+              { "color": "red", "value": 300 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "stat",
+      "title": "RAM RSS (MB)",
+      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_process_resident_memory_bytes{instance=\"127.0.0.1:3000\",job=\"app\"} / 1024 / 1024",
+          "refId": "A",
+          "legendFormat": "RSS MB"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbytes",
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "stat",
+      "title": "Heap usado (MB)",
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_nodejs_heap_size_used_bytes{instance=\"127.0.0.1:3000\",job=\"app\"} / 1024 / 1024",
+          "refId": "A",
+          "legendFormat": "Heap used MB"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbytes",
+          "min": 0
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "CPU total (rate)",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(TechStore_process_cpu_seconds_total{instance=\"127.0.0.1:3000\",job=\"app\"}[5m])",
+          "refId": "A",
+          "legendFormat": "CPU s/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": { "legend": { "showLegend": true } }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "Memoria RSS (MB)",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_process_resident_memory_bytes{instance=\"127.0.0.1:3000\",job=\"app\"} / 1024 / 1024",
+          "refId": "A",
+          "legendFormat": "RSS MB"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbytes",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": { "legend": { "showLegend": true } }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "Heap total vs usado (MB)",
+      "gridPos": { "x": 0, "y": 11, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_nodejs_heap_size_total_bytes{instance=\"127.0.0.1:3000\",job=\"app\"} / 1024 / 1024",
+          "refId": "A",
+          "legendFormat": "Heap total"
+        },
+        {
+          "expr": "TechStore_nodejs_heap_size_used_bytes{instance=\"127.0.0.1:3000\",job=\"app\"} / 1024 / 1024",
+          "refId": "B",
+          "legendFormat": "Heap usado"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbytes",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": { "legend": { "showLegend": true } }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "Event Loop Lag (p50 / p90 / p99 ms)",
+      "gridPos": { "x": 12, "y": 11, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_nodejs_eventloop_lag_p50_seconds{instance=\"127.0.0.1:3000\",job=\"app\"} * 1000",
+          "refId": "A",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "TechStore_nodejs_eventloop_lag_p90_seconds{instance=\"127.0.0.1:3000\",job=\"app\"} * 1000",
+          "refId": "B",
+          "legendFormat": "p90"
+        },
+        {
+          "expr": "TechStore_nodejs_eventloop_lag_p99_seconds{instance=\"127.0.0.1:3000\",job=\"app\"} * 1000",
+          "refId": "C",
+          "legendFormat": "p99"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": { "legend": { "showLegend": true } }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "GC duration por tipo (s)",
+      "gridPos": { "x": 0, "y": 18, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(TechStore_nodejs_gc_duration_seconds_sum{instance=\"127.0.0.1:3000\",job=\"app\"}[5m]) / rate(TechStore_nodejs_gc_duration_seconds_count{instance=\"127.0.0.1:3000\",job=\"app\"}[5m])",
+          "refId": "A",
+          "legendFormat": "GC avg duration"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": { "legend": { "showLegend": true } }
+    },
+
+    {
+      "type": "bargauge",
+      "title": "Handles y Resources activos",
+      "gridPos": { "x": 12, "y": 18, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "TechStore_nodejs_active_handles_total{instance=\"127.0.0.1:3000\",job=\"app\"}",
+          "refId": "A",
+          "legendFormat": "Handles"
+        },
+        {
+          "expr": "TechStore_nodejs_active_resources_total{instance=\"127.0.0.1:3000\",job=\"app\"}",
+          "refId": "B",
+          "legendFormat": "Resources"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal"
+      }
+    },
+
+    {
+      "type": "stat",
+      "title": "Uptime (horas)",
+      "gridPos": { "x": 0, "y": 25, "w": 8, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "(time() - TechStore_process_start_time_seconds{instance=\"127.0.0.1:3000\",job=\"app\"}) / 3600",
+          "refId": "A",
+          "legendFormat": "Uptime h"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "min": 0
+        },
+        "overrides": []
+      }
+    }
+
+  ]
+}
