@@ -3,11 +3,14 @@ name: Build and Push Docker Images
 # Se ejecuta automáticamente cuando se hace push al branch main
 # y también se puede ejecutar manualmente desde la pestaña "Actions"
 on:
+  push:
+    branches:
+      - main
   workflow_run:
-    workflows: ["Build Test and lint"]
+    workflows: ["Pipeline"]
     types:
       - completed
-    
+
   workflow_dispatch:
 
 jobs:
@@ -15,12 +18,23 @@ jobs:
     # Solo correr si:
     # - El workflow de CI terminó OK
     # - El CI corrió sobre la rama master
-    if: >
-      ${{ 
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_branch == 'main'
-      }}  
+    # Ejecutar cuando:
+    # - Se complete con éxito el workflow "Pipeline" en la rama main
+    # - Y cuando haya un push a la rama main (por ejemplo, al mergear a main)
+    if: |
+      ${{ (
+            github.event_name == 'workflow_run' &&
+            github.event.workflow_run.conclusion == 'success' &&
+            github.event.workflow_run.head_branch == 'main'
+          ) && (
+            github.event_name == 'push' && github.ref == 'refs/heads/main'
+          ) }}
     runs-on: ubuntu-latest
+
+    # Evitar ejecuciones duplicadas si coinciden los dos disparadores
+    concurrency:
+      group: deploy-${{ github.repository }}-${{ github.event.workflow_run.head_branch || github.ref }}
+      cancel-in-progress: true
 
 
     steps:
@@ -67,3 +81,19 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/prometheus-custom:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/prometheus-custom:${{ github.run_number }}
+
+
+  sbom:
+      name: Cyclone DX
+      needs: deploy
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+        - name: Install dependencies
+          run: npm ci
+        - name: Generate sbom
+          run: npm run sbom # TODO: esto podria publicarlo en algun lado.
+
