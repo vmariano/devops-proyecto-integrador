@@ -10,9 +10,11 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed --debug"
+    "test:e2e:headed": "playwright test --headed --debug",
+    "sbom" : "cyclonedx-npm --validate"
   },
   "dependencies": {
+    "@cyclonedx/cyclonedx-npm": "^4.1.2",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
